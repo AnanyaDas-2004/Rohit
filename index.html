@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy Birthday Gurrala ji</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #fff0f5;
+            font-family: Arial, sans-serif;
+            padding: 40px 0;
+            margin: 0;
+            border: 15px solid #ff69b4; /* Added colorful border */
+            box-sizing: border-box;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .banner {
+            background-color: #ff69b4;
+            color: white;
+            padding: 20px 40px;
+            border-radius: 10px;
+            font-size: 28px;
+            font-weight: bold;
+            margin-bottom: 80px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            z-index: 10;
+        }
+        
+        .cake-container {
+            position: relative;
+            width: 300px;
+            height: 200px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 75px;
+            z-index: 5;
+        }
+        
+        .cake {
+            width: 200px;
+            height: 150px;
+            background-color: #ffb6c1;
+            border-radius: 10px;
+            position: relative;
+            box-shadow: 0 10px 0 #ff8fab;
+        }
+        
+        .cake:before {
+            content: "";
+            position: absolute;
+            width: 220px;
+            height: 20px;
+            background-color: #ff8fab;
+            border-radius: 10px;
+            top: -10px;
+            left: -10px;
+        }
+        
+        .cake:after {
+            content: "";
+            position: absolute;
+            width: 220px;
+            height: 20px;
+            background-color: #ff8fab;
+            border-radius: 10px;
+            bottom: -10px;
+            left: -10px;
+        }
+        
+        .candles {
+            position: absolute;
+            top: -60px;
+            display: flex;
+            justify-content: center;
+            width: 100%;
+        }
+        
+        .candle {
+            width: 10px;
+            height: 40px;
+            background-color: white;
+            margin: 0 5px;
+            position: relative;
+        }
+        
+        .flame {
+            width: 15px;
+            height: 30px;
+            background-color: #ffd700;
+            border-radius: 50% 50% 20% 20%;
+            position: absolute;
+            top: -25px;
+            left: -2.5px;
+            box-shadow: 0 0 10px #ff4500, 0 0 20px #ff8c00;
+            opacity: 1;
+            transition: opacity 0.5s;
+        }
+        
+        .flame.extinguished {
+            opacity: 0;
+        }
+        
+        .button-container {
+            margin-top: 60px;
+            margin-bottom: 30px;
+            z-index: 5;
+        }
+        
+        button {
+            background-color: #ff69b4;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 20px;
+            border-radius: 30px;
+            cursor: pointer;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s;
+        }
+        
+        button:hover {
+            transform: scale(1.05);
+            background-color: #ff1493;
+        }
+        
+        button:active {
+            transform: scale(0.98);
+        }
+        
+        /* Glitter animation */
+        .glitter {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background-color: gold;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 1;
+            animation: fall linear forwards;
+        }
+        
+        @keyframes fall {
+            to {
+                transform: translateY(100vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+        
+        .confetti {
+            position: absolute;
+            width: 15px;
+            height: 15px;
+            opacity: 0;
+            z-index: 1;
+            animation: confetti-fall 4s linear forwards;
+        }
+        
+        @keyframes confetti-fall {
+            0% {
+                transform: translateY(-100px) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(100vh) rotate(720deg);
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="banner">Happy Birthday Gurrala ji</div>
+    
+    <div class="cake-container">
+        <div class="cake"></div>
+        <div class="candles">
+            <div class="candle">
+                <div class="flame" id="flame1"></div>
+            </div>
+            <div class="candle">
+                <div class="flame" id="flame2"></div>
+            </div>
+            <div class="candle">
+                <div class="flame" id="flame3"></div>
+            </div>
+            <div class="candle">
+                <div class="flame" id="flame4"></div>
+            </div>
+            <div class="candle">
+                <div class="flame" id="flame5"></div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="button-container">
+        <button id="blowButton">Blow the Candles</button>
+    </div>
+    
+    <script>
+        const blowButton = document.getElementById('blowButton');
+        const flames = [
+            document.getElementById('flame1'),
+            document.getElementById('flame2'),
+            document.getElementById('flame3'),
+            document.getElementById('flame4'),
+            document.getElementById('flame5')
+        ];
+        
+        let candlesLit = true;
+        let glitterInterval;
+        
+        function createGlitter() {
+            const colors = ['gold', 'pink', 'white', 'silver', 'lightblue'];
+            const glitter = document.createElement('div');
+            glitter.className = Math.random() > 0.5 ? 'glitter' : 'confetti';
+            
+            // Random properties
+            const size = Math.random() * 10 + 5;
+            const color = colors[Math.floor(Math.random() * colors.length)];
+            const left = Math.random() * 100;
+            const animationDuration = Math.random() * 3 + 2;
+            
+            // Apply styles
+            glitter.style.width = `${size}px`;
+            glitter.style.height = `${size}px`;
+            glitter.style.backgroundColor = color;
+            glitter.style.left = `${left}%`;
+            glitter.style.animationDuration = `${animationDuration}s`;
+            
+            // Add to body
+            document.body.appendChild(glitter);
+            
+            // Remove after animation
+            setTimeout(() => {
+                glitter.remove();
+            }, animationDuration * 1000);
+        }
+        
+        function startGlitterShower() {
+            // Create lots of glitter
+            for (let i = 0; i < 100; i++) {
+                setTimeout(createGlitter, i * 50);
+            }
+            
+            // Continue for 3 seconds
+            glitterInterval = setInterval(createGlitter, 100);
+            setTimeout(() => {
+                clearInterval(glitterInterval);
+            }, 3000);
+        }
+        
+        blowButton.addEventListener('click', function() {
+            if (candlesLit) {
+                // Extinguish all flames
+                flames.forEach(flame => {
+                    flame.classList.add('extinguished');
+                });
+                blowButton.textContent = 'Light the Candles';
+                
+                // Start glitter shower
+                startGlitterShower();
+            } else {
+                // Light all flames
+                flames.forEach(flame => {
+                    flame.classList.remove('extinguished');
+                });
+                blowButton.textContent = 'Blow the Candles';
+                
+                // Stop any ongoing glitter
+                clearInterval(glitterInterval);
+            }
+            
+            candlesLit = !candlesLit;
+        });
+    </script>
+</body>
+</html>
